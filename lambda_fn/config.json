@@ -1,0 +1,1 @@
+{"columns": ["amount", "hour", "new_device", "amt_ratio", "secs_since_last", "tx_5min", "tx_1h", "is_foreign", "category_atm", "category_electronics", "category_fuel", "category_gift_cards", "category_grocery", "category_online_shopping", "category_restaurant", "category_travel", "channel_atm", "channel_online", "channel_pos"], "block_thr": 0.98, "otp_thr": 0.5}
