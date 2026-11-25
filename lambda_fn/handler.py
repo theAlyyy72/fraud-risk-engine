@@ -1,4 +1,4 @@
-import json, os
+import json, os, time
 from datetime import datetime
 from decimal import Decimal
 import boto3
@@ -39,7 +39,9 @@ def build_row(tx, h, ts, dt):
 
 def lambda_handler(event, context):
     done = skipped = 0
+    lat = []
     for rec in event.get("Records", []):
+        t0 = time.perf_counter()
         tx = json.loads(rec["body"])
         dt = datetime.fromisoformat(tx["timestamp"].replace("Z", ""))
         ts = dt.timestamp()
@@ -62,6 +64,7 @@ def lambda_handler(event, context):
         except ClientError as e:
             if e.response["Error"]["Code"] == "ConditionalCheckFailedException":
                 skipped += 1
+                lat.append(round((time.perf_counter() - t0) * 1000, 2))
                 continue
             raise
 
@@ -74,4 +77,5 @@ def lambda_handler(event, context):
         print(json.dumps({"tx": tx["transaction_id"], "user": uid,
                           "score": round(p, 4), "decision": decision}))
         done += 1
-    return {"processed": done, "skipped": skipped}
+        lat.append(round((time.perf_counter() - t0) * 1000, 2))
+    return {"processed": done, "skipped": skipped, "ms": lat}

@@ -6,7 +6,7 @@
 - Accuracy gain came from features, not model size: PR-AUC 0.135 -> 0.482 by adding user history and velocity features. Each such feature costs a lookup, so every new feature must justify its latency.
 - Trade-off rule: add a feature only if it improves PR-AUC meaningfully and can be served from the same single read.
 - Option if latency tightens: score synchronously with the cheap model, run heavier checks asynchronously and act after the fact (e.g. hold settlement).
-- Measured Lambda REPORT lines (first partial replay, 512 MB, ~93 MB used): invocations took ~15-20 ms or ~190-270 ms depending on batch size, which REPORT does not show. Each record costs 3 DynamoDB calls (1 read, 2 writes), so a full batch of 10 is dominated by those 30 calls. Cold starts add ~400-510 ms init (billed). Per-transaction latency still to be measured by logging it in the handler.
+- Measured on 200 new transactions at 512 MB, warm: per-record time inside Lambda p50 about 20 ms, p95 about 24 ms, max 32 ms (1 DynamoDB read, 1 conditional write, 1 history write). One first record took 70 ms (connection setup). A batch of 10 is about 200 ms, consistent with REPORT durations of 190-270 ms. Cold start adds about 400-510 ms init. Excludes queue wait and network. Duplicate-delivery path (no history write) measured separately at p50 about 15 ms. Small sample: 190 warm records, one run.
 
 ## 2. False positives
 - At the 0.5 threshold, precision is 8.3%: about 11 of 12 flagged transactions are legitimate. OTP rate is ~3.6% of all traffic.
