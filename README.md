@@ -29,7 +29,7 @@ Drift demo (4x amounts, more new devices): PSI 0.014 -> 1.03, OTP rate 3.6% -> 1
 ## Honest limitations
 - Data is synthetic. Fraud rate is 0.54%, and the evaluation window has only 40 frauds, so precision/recall are noisy.
 - Kinesis was blocked by the organization policy (SCP) on my account, so I used SQS FIFO. Kinesis would suit higher throughput and replay.
-- SageMaker is not used yet. Creating a training job failed with ResourceLimitExceeded (ml.m5.large training quota is 0 on this new account). A quota increase to 1 was requested (status PENDING on 2026-11-26). The endpoint quota is 8, so hosting is possible once a SageMaker-trained model exists. src/sm_train.py is written but not yet run end to end. Kafka is not used; ingestion uses SQS FIFO.
+- SageMaker is not used yet. Creating a training job failed with ResourceLimitExceeded (ml.m5.large training quota is 0 on this new account). A quota increase to 1 was requested (requested 2026-11-26; status CASE_OPENED, awaiting AWS Support). The endpoint quota is 8, so hosting is possible once a SageMaker-trained model exists. src/sm_train.py is written but not yet run end to end. Kafka is not used; ingestion uses SQS FIFO.
 - Precision/Recall need fraud labels, which arrive late in real life, so rate/drift alarms come first.
 
 ## Run
