@@ -6,7 +6,7 @@
 - Accuracy gain came from features, not model size: PR-AUC 0.135 -> 0.482 by adding user history and velocity features. Each such feature costs a lookup, so every new feature must justify its latency.
 - Trade-off rule: add a feature only if it improves PR-AUC meaningfully and can be served from the same single read.
 - Option if latency tightens: score synchronously with the cheap model, run heavier checks asynchronously and act after the fact (e.g. hold settlement).
-- Lambda duration per batch: measure from CloudWatch REPORT lines (not claimed here until measured).
+- Measured Lambda REPORT lines (first partial replay, 512 MB, ~93 MB used): invocations took ~15-20 ms or ~190-270 ms depending on batch size, which REPORT does not show. Each record costs 3 DynamoDB calls (1 read, 2 writes), so a full batch of 10 is dominated by those 30 calls. Cold starts add ~400-510 ms init (billed). Per-transaction latency still to be measured by logging it in the handler.
 
 ## 2. False positives
 - At the 0.5 threshold, precision is 8.3%: about 11 of 12 flagged transactions are legitimate. OTP rate is ~3.6% of all traffic.
