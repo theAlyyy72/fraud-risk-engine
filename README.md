@@ -9,7 +9,7 @@ Flow: Producer -> SQS FIFO -> Lambda (features + XGBoost) -> DynamoDB -> CloudWa
 - + Feature engineering (user history, velocity): PR-AUC 0.482
 - AWS replay, last 10k transactions: PR-AUC 0.481, recall 80% (32/40 fraud), precision 8.3%
 - BLOCK tier only: precision 57%, recall 42%
-- Lambda scoring: ~2-3 ms per batch of 10 (model evaluator, no heavy libs)
+- Lambda scoring latency: measured separately, see DESIGN_DISCUSSION.md
 - Offline vs AWS score parity: max diff 5e-07
 
 ## Decision policy
