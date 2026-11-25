@@ -53,7 +53,7 @@ def lambda_handler(event, context):
         decision = ("BLOCK" if p > cfg["block_thr"]
                     else "OTP_CHALLENGE" if p > cfg["otp_thr"] else "APPROVE")
 
-        try:  # idempotent: duplicate delivery ko skip karo
+        try:  # idempotent: skip duplicate deliveries
             dec_t.put_item(
                 Item={"transaction_id": int(tx["transaction_id"]), "user_id": uid,
                       "amount": Decimal(str(tx["amount"])),

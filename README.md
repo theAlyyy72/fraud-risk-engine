@@ -1,6 +1,6 @@
 # Real-Time Fraud Detection & Risk Engine
 
-ML + streaming + AWS. Transaction aate hi score hota hai, decision banta hai, aur monitoring drift pakadti hai.
+ML + streaming + AWS. Each transaction is scored as it arrives, a decision is made, and monitoring catches model drift.
 
 Flow: Producer -> SQS FIFO -> Lambda (features + XGBoost) -> DynamoDB -> CloudWatch metrics -> Alarms -> SNS alert
 

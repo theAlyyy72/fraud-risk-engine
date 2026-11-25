@@ -14,7 +14,7 @@ df = pd.DataFrame(items)
 for c in ["transaction_id", "risk_score", "is_fraud"]:
     df[c] = df[c].astype(float)
 print("total decisions:", len(df))
-df = df[df.transaction_id >= 190480]          # sirf aakhri 10k (warm-ish)
+df = df[df.transaction_id >= 190480]          # only the last 10k (reasonably warm)
 if len(df) == 0:
     raise SystemExit("The Last 10K have not been processed yet. Please wait a little.")
 y = df.is_fraud == 1
