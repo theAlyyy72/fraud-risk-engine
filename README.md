@@ -4,6 +4,22 @@ ML + streaming + AWS. Each transaction is scored as it arrives, a decision is ma
 
 Flow: Producer -> SQS FIFO -> Lambda (features + XGBoost) -> DynamoDB -> CloudWatch metrics -> Alarms -> SNS alert
 
+## Architecture
+
+```mermaid
+flowchart LR
+    P["Producer<br/>src/producer.py"] -->|"MessageGroupId = user_id"| Q["SQS FIFO<br/>fraud-transactions.fifo"]
+    Q --> L["Lambda fraud-scorer<br/>features + XGBoost scorer"]
+    L <-->|"read / update history"| H[("DynamoDB<br/>fraud-user-history")]
+    L -->|"score + decision"| D[("DynamoDB<br/>fraud-decisions")]
+    D --> M["monitor.py<br/>run on demand"]
+    M -->|"custom metrics"| C["CloudWatch<br/>namespace FraudEngine"]
+    C --> A["Alarms: drift, OTP rate, block rate"]
+    A --> S["SNS email alert"]
+    N["Notebook training<br/>XGBoost, model JSON in Lambda zip"] -.-> L
+    SM["SageMaker training<br/>planned, quota pending"] -.-> N
+```
+
 ## Results (synthetic data, time-based split)
 - Baseline (raw features): PR-AUC 0.135
 - + Feature engineering (user history, velocity): PR-AUC 0.482
