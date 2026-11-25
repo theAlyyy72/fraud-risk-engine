@@ -7,7 +7,7 @@ sqs = boto3.client("sqs", region_name="ap-southeast-2")
 url = sqs.get_queue_url(QueueName="fraud-transactions.fifo")["QueueUrl"]
 
 n = int(sys.argv[1]) if len(sys.argv) > 1 else 200
-df = pd.read_csv("data/transactions.csv", parse_dates=["timestamp"])
+df = pd.read_csv(sys.argv[2] if len(sys.argv) > 2 else "data/transactions.csv", parse_dates=["timestamp"])
 df = df.sort_values("timestamp").tail(n)
 records = json.loads(df.to_json(orient="records", date_format="iso"))
 

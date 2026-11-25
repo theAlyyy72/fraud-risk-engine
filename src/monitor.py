@@ -15,7 +15,7 @@ for c in ["transaction_id", "risk_score", "is_fraud"]:
     df[c] = df[c].astype(float)
 
 base = df[(df.transaction_id >= 170480) & (df.transaction_id < 190480)]
-cur = df[df.transaction_id >= 190480]
+import sys; cur = df[df.transaction_id >= (1000000 if "drift" in sys.argv else 190480)]
 
 edges = np.unique(np.quantile(base.risk_score, np.linspace(0, 1, 11)))
 edges[0], edges[-1] = -np.inf, np.inf
