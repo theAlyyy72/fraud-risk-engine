@@ -59,4 +59,4 @@ python src/evaluate.py           # precision and recall from DynamoDB
 python src/monitor.py            # publish CloudWatch metrics
 ```
 
-Needs an AWS login (`aws login --region ap-southeast-2`) and the resources above. `teardown.sh` removes them.
+Needs an AWS login (`aws login --region ap-southeast-2`) and these resources: SQS FIFO queue fraud-transactions.fifo, Lambda fraud-scorer, DynamoDB tables fraud-user-history and fraud-decisions, three CloudWatch alarms, SNS topic fraud-alerts. There is no automated setup script yet. `teardown.sh` removes them.
