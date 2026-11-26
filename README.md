@@ -7,7 +7,7 @@ Flow: Producer -> SQS FIFO -> Lambda (features + XGBoost) -> DynamoDB -> CloudWa
 ## Architecture
 
 ```mermaid
-flowchart LR
+flowchart TD
     P["Producer<br/>src/producer.py"] -->|"MessageGroupId = user_id"| Q["SQS FIFO<br/>fraud-transactions.fifo"]
     Q --> L["Lambda fraud-scorer<br/>features + XGBoost scorer"]
     L <-->|"read / update history"| H[("DynamoDB<br/>fraud-user-history")]
@@ -22,7 +22,7 @@ flowchart LR
 
 ## Results (synthetic data, time-based split)
 - Baseline (raw features): PR-AUC 0.135
-- + Feature engineering (user history, velocity): PR-AUC 0.482
+- Feature engineering added (user history, velocity): PR-AUC 0.482
 - AWS replay, last 10k transactions: PR-AUC 0.481, recall 80% (32/40 fraud), precision 8.3%
 - BLOCK tier only: precision 57%, recall 42%
 - Lambda scoring latency (warm, per transaction, inside Lambda): p50 about 20 ms, p95 about 24 ms. Details in DESIGN_DISCUSSION.md
@@ -49,5 +49,14 @@ Drift demo (4x amounts, more new devices): PSI 0.014 -> 1.03, OTP rate 3.6% -> 1
 - Precision/Recall need fraud labels, which arrive late in real life, so rate/drift alarms come first.
 
 ## Run
-python src/generate_data.py, then the notebook for training, then src/producer.py, src/evaluate.py, src/monitor.py.
-Needs AWS login (ap-southeast-2).
+
+```bash
+pip install -r requirements.txt
+python src/generate_data.py      # creates data/transactions.csv
+# train in notebooks/01_eda.ipynb (saves models/)
+python src/producer.py 30000     # send transactions to SQS
+python src/evaluate.py           # precision and recall from DynamoDB
+python src/monitor.py            # publish CloudWatch metrics
+```
+
+Needs an AWS login (`aws login --region ap-southeast-2`) and the resources above. `teardown.sh` removes them.
